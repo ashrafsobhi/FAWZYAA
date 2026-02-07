@@ -1,0 +1,7 @@
+{
+  "name": "EngLearn - Egyptian Coach",
+  "description": "A mobile-first English learning app using real-time voice AI with explanations in Egyptian Arabic.",
+  "requestFramePermissions": [
+    "microphone"
+  ]
+}

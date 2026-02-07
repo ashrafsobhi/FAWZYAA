@@ -1,0 +1,118 @@
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>فوزية - تعلم الإنجليزية بالمصري</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-warm: #FDFBF7;
+            --primary-accent: #C67353;
+            --secondary-accent: #8BA888;
+            --text-main: #2D2D2D;
+            --glass: rgba(255, 255, 255, 0.85);
+        }
+        
+        * {
+            -webkit-tap-highlight-color: transparent;
+            box-sizing: border-box;
+            outline: none;
+        }
+
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            height: -webkit-fill-available;
+            overflow: hidden;
+            background-color: var(--bg-warm);
+            font-family: 'IBM Plex Sans Arabic', sans-serif;
+            color: var(--text-main);
+        }
+
+        #root {
+            width: 100%;
+            height: 100%;
+        }
+
+        .app-container {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            background: var(--bg-warm);
+        }
+
+        /* Responsive Content Constraints for Desktop */
+        .content-width {
+            width: 100%;
+            max-width: 600px; /* مريحة للعين على الشاشات الكبيرة */
+            margin: 0 auto;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .glass-card {
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.6);
+        }
+
+        .terracotta-btn { 
+            background: linear-gradient(135deg, #C67353 0%, #A35D42 100%);
+            box-shadow: 0 15px 35px -10px rgba(198, 115, 83, 0.4);
+        }
+
+        @keyframes word-pop {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.15); }
+            100% { transform: scale(1.05); }
+        }
+
+        @keyframes word-shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+
+        .animate-pop { animation: word-pop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+        .animate-shake { animation: word-shake 0.3s ease-in-out; }
+
+        .safe-area-top { padding-top: env(safe-area-inset-top, 16px); }
+        .safe-area-bottom { padding-bottom: env(safe-area-inset-bottom, 16px); }
+
+        .scroll-hide::-webkit-scrollbar { display: none; }
+        .scroll-hide { -ms-overflow-style: none; scrollbar-width: none; }
+
+        /* Smooth tab transitions */
+        .tab-content {
+            animation: fadeIn 0.4s ease-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+    <script type="importmap">
+    {
+      "imports": {
+        "react/": "https://esm.sh/react@^19.2.4/",
+        "react": "https://esm.sh/react@^19.2.4",
+        "@google/genai": "https://esm.sh/@google/genai@^1.40.0",
+        "react-dom/": "https://esm.sh/react-dom@^19.2.4/"
+      }
+    }
+    </script>
+</head>
+<body>
+    <div id="root"></div>
+<script type="module" src="/index.tsx"></script>
+</body>
+</html>
