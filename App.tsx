@@ -32,7 +32,7 @@ const App: React.FC = () => {
 
   return (
     <div className="app-container">
-      <main className="flex-1 overflow-hidden relative flex flex-col h-full">
+      <main className="flex-1 overflow-y-auto relative flex flex-col h-full">
         <div className="content-width">
           {activeTab === 'home' && (
             <div className="flex-1 overflow-y-auto scroll-hide p-6 space-y-10 safe-area-top pb-32 tab-content">

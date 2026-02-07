@@ -165,7 +165,7 @@ const VoiceChatView: React.FC<VoiceChatViewProps> = ({ stats, onTurnComplete, on
   };
 
   return (
-    <div className="flex flex-col h-full bg-[#FDFBF7] relative overflow-hidden">
+    <div className="flex flex-col h-full bg-[#FDFBF7] relative overflow-y-auto">
       {/* Immersive Header */}
       <header className="px-6 py-6 safe-area-top flex justify-between items-center z-50">
         <button onClick={handleBackClick} className="w-14 h-14 flex items-center justify-center rounded-2xl bg-white shadow-xl border border-gray-100 text-gray-400 active:scale-90 transition-transform">
@@ -182,7 +182,7 @@ const VoiceChatView: React.FC<VoiceChatViewProps> = ({ stats, onTurnComplete, on
         </div>
       </header>
 
-      <main className="flex-1 flex flex-col items-center justify-between px-6 py-4 relative z-10 overflow-hidden">
+      <main className="flex-1 flex flex-col items-center justify-between px-6 py-4 relative z-10 overflow-y-auto">
         
         {/* The Card - Centerpiece */}
         <div className={`w-full max-w-2xl transition-all duration-700 transform ${targetSentence ? 'translate-y-0 opacity-100' : '-translate-y-12 opacity-0 pointer-events-none'}`}>
