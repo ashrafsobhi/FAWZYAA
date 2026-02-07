@@ -27,11 +27,15 @@ const VoiceChatView: React.FC<VoiceChatViewProps> = ({ stats, onTurnComplete, on
   const [targetSentence, setTargetSentence] = useState<TargetSentence | null>(null);
   const [transcription, setTranscription] = useState('');
   const [isPerfect, setIsPerfect] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   
   const audioContextRef = useRef<AudioContext | null>(null);
   const outputContextRef = useRef<AudioContext | null>(null);
   const nextStartTimeRef = useRef(0);
   const sessionRef = useRef<any>(null);
+  const inputProcessorRef = useRef<ScriptProcessorNode | null>(null);
+  const inputSourceRef = useRef<MediaStreamAudioSourceNode | null>(null);
+  const inputStreamRef = useRef<MediaStream | null>(null);
 
   const setTargetSentenceFunc: FunctionDeclaration = {
     name: 'setTargetSentence',
@@ -61,12 +65,18 @@ const VoiceChatView: React.FC<VoiceChatViewProps> = ({ stats, onTurnComplete, on
 
   const startSession = async () => {
     try {
+      if (!process.env.API_KEY) {
+        setErrorMessage('لازم تضيف مفتاح Gemini API في إعدادات النشر قبل ما نبدأ.');
+        return;
+      }
+      setErrorMessage(null);
       setIsConnecting(true);
       const ai = new GoogleGenAI({ apiKey: process.env.API_KEY || '' });
       audioContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)({ sampleRate: 16000 });
       outputContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)({ sampleRate: 24000 });
       
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      inputStreamRef.current = stream;
       
       const sessionPromise = ai.live.connect({
         model: 'gemini-2.5-flash-native-audio-preview-12-2025',
@@ -76,6 +86,8 @@ const VoiceChatView: React.FC<VoiceChatViewProps> = ({ stats, onTurnComplete, on
             setIsActive(true);
             const source = audioContextRef.current!.createMediaStreamSource(stream);
             const scriptProcessor = audioContextRef.current!.createScriptProcessor(4096, 1, 1);
+            inputSourceRef.current = source;
+            inputProcessorRef.current = scriptProcessor;
             scriptProcessor.onaudioprocess = (e) => {
               sessionPromise.then(s => s.sendRealtimeInput({ media: createBlob(e.inputBuffer.getChannelData(0)) }));
             };
@@ -130,7 +142,10 @@ const VoiceChatView: React.FC<VoiceChatViewProps> = ({ stats, onTurnComplete, on
               nextStartTimeRef.current += buffer.duration;
             }
           },
-          onerror: () => stopSession()
+          onerror: () => {
+            setErrorMessage('حصلت مشكلة في الاتصال. جرّب تاني بعد التأكد من الـ API Key.');
+            stopSession();
+          }
         },
         config: {
           responseModalities: [Modality.AUDIO],
@@ -147,13 +162,24 @@ const VoiceChatView: React.FC<VoiceChatViewProps> = ({ stats, onTurnComplete, on
         }
       });
       sessionRef.current = sessionPromise;
-    } catch (e) { setIsConnecting(false); }
+    } catch (e) {
+      setIsConnecting(false);
+      setErrorMessage('مش قادر أبدأ الاتصال. راجع الإعدادات وجرّب تاني.');
+    }
   };
 
   const stopSession = () => {
     setIsActive(false);
     sessionRef.current?.then((s: any) => s.close());
     sessionRef.current = null;
+    inputProcessorRef.current?.disconnect();
+    inputSourceRef.current?.disconnect();
+    inputProcessorRef.current = null;
+    inputSourceRef.current = null;
+    if (inputStreamRef.current) {
+      inputStreamRef.current.getTracks().forEach(t => t.stop());
+      inputStreamRef.current = null;
+    }
     setTargetSentence(null);
     setTranscription('');
     setIsPerfect(false);
@@ -245,6 +271,11 @@ const VoiceChatView: React.FC<VoiceChatViewProps> = ({ stats, onTurnComplete, on
 
         {/* Action Controller */}
         <footer className="w-full flex flex-col items-center pb-16 safe-area-bottom">
+          {errorMessage && (
+            <div className="mb-6 px-6 py-4 rounded-3xl bg-red-50 text-red-600 text-sm font-bold border border-red-100 text-center">
+              {errorMessage}
+            </div>
+          )}
           <button 
             onClick={isActive ? stopSession : startSession}
             disabled={isConnecting}
