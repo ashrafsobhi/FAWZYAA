@@ -65,13 +65,14 @@ const VoiceChatView: React.FC<VoiceChatViewProps> = ({ stats, onTurnComplete, on
 
   const startSession = async () => {
     try {
-      if (!process.env.API_KEY) {
+      const apiKey = (import.meta as any).env?.VITE_GEMINI_API_KEY || process.env.API_KEY || '';
+      if (!apiKey) {
         setErrorMessage('لازم تضيف مفتاح Gemini API في إعدادات النشر قبل ما نبدأ.');
         return;
       }
       setErrorMessage(null);
       setIsConnecting(true);
-      const ai = new GoogleGenAI({ apiKey: process.env.API_KEY || '' });
+      const ai = new GoogleGenAI({ apiKey });
       audioContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)({ sampleRate: 16000 });
       outputContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)({ sampleRate: 24000 });
       
